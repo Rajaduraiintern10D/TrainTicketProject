@@ -1,0 +1,90 @@
+﻿@model TicketBookingProjectUI.Models.RegisterUser
+@{
+    Layout = null;
+}
+<h2 style="text-align: center;">Register</h2>
+
+<form asp-action="Register" asp-controller="Account" method="post" style="max-width: 400px; margin: 0 auto;">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="User_Name">Username</label>
+        <input asp-for="User_Name" class="form-control" style="width: 100%" />
+        <span asp-validation-for="User_Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="User_Password">Password</label>
+        <input asp-for="User_Password" class="form-control" type="password" style="width: 100%" />
+        <span asp-validation-for="User_Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Role">Role</label>
+        <input asp-for="Role" class="form-control" style="width: 100%" />
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MailId">Email</label>
+        <input asp-for="MailId" class="form-control" style="width: 100%" />
+        <span asp-validation-for="MailId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+</form>
+
+<style>
+    /* Custom CSS for the registration form */
+    body {
+        background-color: #f8f9fa; /* Light gray background */
+    }
+
+    h2 {
+        margin-top: 40px; /* Adjust top margin as needed */
+    }
+
+    form {
+        margin-top: 20px; /* Adjust top margin as needed */
+    }
+
+    .form-group {
+        margin-bottom: 20px; /* Adjust bottom margin as needed */
+    }
+
+    .form-control {
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+
+        .form-control:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary:hover {
+            color: #fff;
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+    .text-danger {
+        color: #dc3545; /* Red color for validation messages */
+    }
+</style>

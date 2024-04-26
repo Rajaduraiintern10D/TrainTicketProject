@@ -1,0 +1,42 @@
+﻿@using Newtonsoft.Json.Linq
+@model string
+
+@if (!string.IsNullOrEmpty(Model))
+{
+    var data = JsonConvert.DeserializeObject<List<dynamic>>(Model);
+
+    if (data.Count > 0)
+    {
+        <div style="margin-top: 20px;padding:80;">
+            <table style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        @foreach (var item in ((JObject)data[0]).Properties())
+                        {
+                            <th style="padding: 8px; border: 1px solid #ddd;">@item.Name</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in data)
+                    {
+                        <tr>
+                            @foreach (var cell in ((JObject)row).Properties())
+                            {
+                                <td style="padding: 8px; border: 1px solid #ddd;">@cell.Value</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p>No data available.</p>
+    }
+}
+else
+{
+    <p>No response data available.</p>
+}

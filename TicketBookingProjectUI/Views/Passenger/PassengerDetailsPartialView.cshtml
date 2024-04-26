@@ -1,0 +1,83 @@
+﻿@model TicketBookingProjectUI.Models.PassengerViewModel
+<html>
+<head>
+    <style>
+        /* Style for the custom table */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            /* Style for table headers */
+            .custom-table th {
+                text-align: center;
+                vertical-align: middle;
+                padding: 8px;
+                background-color: #f2f2f2;
+            }
+
+            /* Style for table data */
+            .custom-table td {
+                text-align: center;
+                vertical-align: middle;
+                padding: 8px;
+                border: 1px solid #dddddd;
+            }
+
+            /* Alternate row styling */
+            .custom-table tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+    </style>
+</head>
+<body>
+    <div id="PartialViewContainer">
+        <table class="custom-table">
+    <tr>
+        <th>Passenger Name</th>
+        <th>Passenger Gender</th>
+        <th>Starting City</th>
+        <th>Destination City</th>
+        <th>Departure Date</th>
+        <th>Departure Time</th>
+        <th>Destination Date</th>
+        <th>Destination Time</th>
+        <th>Class</th>
+        <th>Total Ticket Count</th>
+        <th>Total Fare</th>
+        <th>Status</th>
+        <th>Booked Ticket Time</th>
+    </tr>
+    <tr>
+        <td>@Model.PassengerDetails.Passenger_Name</td>
+        <td>@Model.PassengerDetails.Passenger_gender</td>
+        <td>@Model.PassengerDetails.StartingCity</td>
+        <td>@Model.PassengerDetails.DestinationCity</td>
+        <td>@Model.PassengerDetails.DepartureDate.ToShortDateString()</td>
+        <td>@Model.PassengerDetails.DepartureTime.ToString("hh\\:mm\\:ss")</td>
+        <td>@Model.PassengerDetails.DestinationDate.ToShortDateString()</td>
+        <td>@Model.PassengerDetails.DestinationTime.ToString("hh\\:mm\\:ss")</td>
+        <td>@Model.PassengerDetails.Class</td>
+        <td>@Model.PassengerDetails.TotalTicketCount</td>
+        <td>@Model.PassengerDetails.TotalFare</td>
+        <td>@Model.PassengerDetails.Status</td>
+        <td>@Model.PassengerDetails.BookedTicketTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+    </tr>
+        
+</table>
+        <button id="clearPartialViewButton" class="btn btn-primary">Clear</button>
+    </div>
+    <script>
+        document.getElementById('clearPartialViewButton').addEventListener('click', function () {
+            clearPartialView();
+        });
+
+        function clearPartialView() {
+            var partialViewContainer = document.getElementById('PartialViewContainer');
+            if (partialViewContainer) {
+                partialViewContainer.innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>

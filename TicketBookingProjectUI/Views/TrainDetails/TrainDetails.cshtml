@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 60px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .form-row {
+            /*  display: flex; */
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: auto;
+            margin-right: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input[type="date"] {
+            width: 30%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0d6efd;
+            }
+    </style>
+</head>
+<body>
+    <h2>Date Range Input</h2>
+
+    @using (Html.BeginForm("GetTrainDate", "TrainDetails", FormMethod.Get))
+    {
+        <div class="form-row">
+            <div class="form-group">
+                <label for="fromDate">From Date:</label>
+                <input type="date" id="fromDate" name="FromDate" required>
+            </div>
+            <div class="form-group">
+                <label for="toDate">To Date:</label>
+                <input type="date" id="toDate" name="ToDate">
+            </div>
+        </div>
+        <button type="submit">Submit</button>
+    }
+    <!-- Render partial view below the form -->
+    @if (!string.IsNullOrEmpty(ViewBag.ResponseData))
+    {
+        @Html.Partial("PassengerDetailsPartialView", (object)ViewBag.ResponseData)
+    }
+
+</body>
+</html>

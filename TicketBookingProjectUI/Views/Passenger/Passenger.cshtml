@@ -1,0 +1,108 @@
+﻿@model TicketBookingProjectUI.Models.PassengerViewModel
+
+
+@{
+    ViewBag.Title = "Ticket Booking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section content {
+    <div class="container">
+        <h2>Ticket Booking</h2>
+        <hr />
+        @using (Html.BeginForm("Passenger", "Passenger", FormMethod.Post)) // Specify the POST action and controller
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PassengerDto.Passenger_Name, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PassengerDto.Passenger_Name, new { @class = "form-control small-textbox" })
+                        @Html.ValidationMessageFor(m => m.PassengerDto.Passenger_Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PassengerDto.Passenger_Age, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PassengerDto.Passenger_Age, new { @class = "form-control small-textbox" })
+                        @Html.ValidationMessageFor(m => m.PassengerDto.Passenger_Age, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PassengerDto.Passenger_gender, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PassengerDto.Passenger_gender, new { @class = "form-control small-textbox" })
+                        @Html.ValidationMessageFor(m => m.PassengerDto.Passenger_gender, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PassengerDto.TrainNumber, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PassengerDto.TrainNumber, new { @class = "form-control small-textbox" })
+                        @Html.ValidationMessageFor(m => m.PassengerDto.TrainNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PassengerDto.Class, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PassengerDto.Class, new { @class = "form-control small-textbox" })
+                        @Html.ValidationMessageFor(m => m.PassengerDto.Class, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PassengerDto.TotalTicketCount, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PassengerDto.TotalTicketCount, new { @class = "form-control small-textbox" })
+                        @Html.ValidationMessageFor(m => m.PassengerDto.TotalTicketCount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        }
+        <!-- Another textbox to get passenger details by passenger ID -->
+        @using (Html.BeginForm("GetPassengerDetails", "Passenger", FormMethod.Get))
+        {
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.Label("Passenger ID", null, new { @class = "control-label" })
+                        @Html.TextBox("P_Id", null, new { @class = "form-control small-textbox-passenger-id" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Get Passenger Details</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Render the partial view only if the passenger details are available -->
+        @if (Model != null)
+        {
+            Html.RenderPartial("PassengerDetailsPartialView", Model);
+        }
+        
+    </div>  
+}
+
+<style>
+    .small-textbox {
+        width: 100%; /* Take full width of the column */
+    }
+
+    .small-textbox-passenger-id {
+        width: 177px; /* Adjust the width as needed */
+    }
+</style>
