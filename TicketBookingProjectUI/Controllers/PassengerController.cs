@@ -19,60 +19,126 @@ namespace TicketBookingProjectUI.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Passenger(PassengerDto passenger)
+        public async Task<IActionResult> Passenger(PassengerDto passengerDto, IFormFile Image)
         {
             if (ModelState.IsValid)
             {
-                var result = await _apiService.PassengerAsync(passenger);
+                //check if image is provided 
+                if (Image != null && Image.Length > 0)
+                {
+                    // Read the image data into a byte array
+                    using (var stream = new MemoryStream())
+                    {
+                        await Image.CopyToAsync(stream);
+                        // Convert the byte array to a Base64 string
+                        passengerDto.Image = Convert.ToBase64String(stream.ToArray());
+                    }
+                }
+
+                // Now, you can pass passengerDto to your ApiService
+                var result = await _apiService.PassengerAsync(passengerDto);
 
                 if (result.IsSuccessStatusCode)
                 {
-                    // Handle successful response (status code 200-299)
-                    // You can access response content using result.Content if needed
+                  var responseContent=  await result.Content.ReadAsStringAsync();
+                  var responseObject = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    var PassengerId = responseObject.passengerId;
+                    ViewBag.ResponseData = PassengerId;
                 }
                 else
                 {
-                    // Handle error response (status code other than 200-299)
-                    // You can access status code, reason phrase, and content using result.StatusCode, result.ReasonPhrase, and result.Content if needed
+
                 }
-            }
-             return View(passenger);
-        }
-           
-            public IActionResult GetPassengerDetails()
-            {
                 return View();
             }
-            [HttpGet]
-            public async Task<IActionResult> GetPassengerDetails(PassengerDetails passengerDetails)
+            return View(passengerDto);
+        }
+
+        public IActionResult GetPassengerDetails()
+        {
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetPassengerDetails(PassengerDetails passengerDetails)
+        {
+            int passengerID = passengerDetails.P_Id;
+
+            // Call the Web API to get passenger details along with image data
+            var response = await _apiService.GetPassengerAsync(passengerID);
+
+            if (!string.IsNullOrEmpty(response))
             {
-                int passengerID=passengerDetails.P_Id;
+                // Deserialize the response JSON string
+                var responseObject = JsonConvert.DeserializeObject<dynamic>(response);
 
-                var jsonSting = await _apiService.GetPassengerAsync(passengerID);
+                // Extract passenger details and image data from the response
+                var passengerDetail = JsonConvert.DeserializeObject<PassengerDetails>(responseObject.passenger.ToString());
+                var imageData = Convert.FromBase64String(responseObject.imagedata.ToString());
 
-                if (!string.IsNullOrEmpty(jsonSting))
-                {
-                   
-                var passengerDetail= JsonConvert.DeserializeObject<PassengerDetails>(jsonSting);
-                var passengerDto=new PassengerDto
+                var passengerDto = new PassengerDto
                 {
                     P_Id = passengerDetail.P_Id,
                     Passenger_Name = passengerDetail.Passenger_Name,
                 };
+
                 var viewModel = new PassengerViewModel
                 {
                     PassengerDetails = passengerDetail,
-                    PassengerDto = passengerDto
+                    PassengerDto = passengerDto,
+                    ImageData = imageData // Add image data to the view model
                 };
-                //pass the passengerDetail object to the view
+
+                // Pass the view model to the view
                 return View("Passenger", viewModel);
+            }
+            else
+            {
+                // Handle error response or no data available
+                return View("Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePassenger(int passengerId, PassengerDto passengerDto, IFormFile PassengerImage)
+        {
+            try
+            {
+                // Check if an image file was uploaded
+                if (PassengerImage != null && PassengerImage.Length > 0)
+                {       
+                    // Convert the image to a Base64 string
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await PassengerImage.CopyToAsync(memoryStream);
+                        passengerDto.Image = Convert.ToBase64String(memoryStream.ToArray());
+                    }
+                }
+
+                // Call the API service to update the passenger
+                var success = await _apiService.UpdatePassengerAsync(passengerId, passengerDto);
+
+                if (success)
+                {
+                    // Set success message in TempData
+                    TempData["SuccessMessage"] = "Passenger updated successfully.";
+                    // If the update is successful, return a success view
+                    return RedirectToAction("Passenger", "Passenger");
                 }
                 else
                 {
-                    // Handle error response or no data available
+                    // If the update fails, return an error view
                     return View("Error");
                 }
             }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                Console.WriteLine($"Error updating passenger: {ex.Message}");
+                return View("Error");
+            }
+        }
+
+
     }
 }
 

@@ -39,6 +39,7 @@ namespace TicketBookingProject.Data.Models
         public TimeSpan DestinationTime { get; set; }
 
         // Navigation property for TrainWiseSeatAvailability
+
         public TrainWiseSeatAvailability SeatAvailability { get; set; }
 
 

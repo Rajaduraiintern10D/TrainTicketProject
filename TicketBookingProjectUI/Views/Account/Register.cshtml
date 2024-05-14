@@ -2,36 +2,40 @@
 @{
     Layout = null;
 }
+
 <h2 style="text-align: center;">Register</h2>
 
 <form asp-action="Register" asp-controller="Account" method="post" style="max-width: 400px; margin: 0 auto;">
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="form-group">
-        <label asp-for="User_Name">Username</label>
-        <input asp-for="User_Name" class="form-control" style="width: 100%" />
+        <label asp-for="User_Name">Username:</label>
+        <input asp-for="User_Name" class="form-control" style="width: 100%;" />
         <span asp-validation-for="User_Name" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="User_Password">Password</label>
-        <input asp-for="User_Password" class="form-control" type="password" style="width: 100%" />
+        <label asp-for="User_Password">Password:</label>
+        <input asp-for="User_Password" class="form-control" type="password" style="width: 100%;" />
         <span asp-validation-for="User_Password" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Role">Role</label>
-        <input asp-for="Role" class="form-control" style="width: 100%" />
+        <label asp-for="Role">Role:</label>
+        <input asp-for="Role" class="form-control" style="width: 100%;" />
         <span asp-validation-for="Role" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="MailId">Email</label>
-        <input asp-for="MailId" class="form-control" style="width: 100%" />
+        <label asp-for="MailId">Email:</label>
+        <input asp-for="MailId" class="form-control" style="width: 100%;" />
         <span asp-validation-for="MailId" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+
+    <!-- "Back to Login" link -->
+    <a href="/Sign/Index" class="btn btn-link" style="display: block; width: 100%; text-align: center; margin-top: 10px;">Back to Login</a>
 </form>
 
 <style>
@@ -52,6 +56,11 @@
         margin-bottom: 20px; /* Adjust bottom margin as needed */
     }
 
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
     .form-control {
         padding: .375rem .75rem;
         font-size: 1rem;
@@ -61,7 +70,8 @@
         background-clip: padding-box;
         border: 1px solid #ced4da;
         border-radius: .25rem;
-        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        width: 100%;
     }
 
         .form-control:focus {
@@ -76,12 +86,26 @@
         color: #fff;
         background-color: #007bff;
         border-color: #007bff;
+        width: 100%;
     }
 
         .btn-primary:hover {
             color: #fff;
             background-color: #0069d9;
             border-color: #0062cc;
+        }
+
+    .btn-link {
+        color: #007bff; /* Blue color for links */
+        text-decoration: none; /* Remove default underline */
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+        .btn-link:hover {
+            color: #0056b3; /* Darker blue color on hover */
+            text-decoration: underline; /* Add underline on hover */
         }
 
     .text-danger {

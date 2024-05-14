@@ -1,4 +1,5 @@
 ﻿@model TicketBookingProjectUI.Models.PassengerViewModel
+
 <html>
 <head>
     <style>
@@ -28,56 +29,206 @@
             .custom-table tr:nth-child(even) {
                 background-color: #f9f9f9;
             }
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* Center horizontally */
+            position: absolute;
+            top: 50%; /* Center vertically */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .image-preview {
+            width: 100px;
+            height: 100px;  
+        }
     </style>
 </head>
 <body>
-    <div id="PartialViewContainer">
-        <table class="custom-table">
-    <tr>
-        <th>Passenger Name</th>
-        <th>Passenger Gender</th>
-        <th>Starting City</th>
-        <th>Destination City</th>
-        <th>Departure Date</th>
-        <th>Departure Time</th>
-        <th>Destination Date</th>
-        <th>Destination Time</th>
-        <th>Class</th>
-        <th>Total Ticket Count</th>
-        <th>Total Fare</th>
-        <th>Status</th>
-        <th>Booked Ticket Time</th>
-    </tr>
-    <tr>
-        <td>@Model.PassengerDetails.Passenger_Name</td>
-        <td>@Model.PassengerDetails.Passenger_gender</td>
-        <td>@Model.PassengerDetails.StartingCity</td>
-        <td>@Model.PassengerDetails.DestinationCity</td>
-        <td>@Model.PassengerDetails.DepartureDate.ToShortDateString()</td>
-        <td>@Model.PassengerDetails.DepartureTime.ToString("hh\\:mm\\:ss")</td>
-        <td>@Model.PassengerDetails.DestinationDate.ToShortDateString()</td>
-        <td>@Model.PassengerDetails.DestinationTime.ToString("hh\\:mm\\:ss")</td>
-        <td>@Model.PassengerDetails.Class</td>
-        <td>@Model.PassengerDetails.TotalTicketCount</td>
-        <td>@Model.PassengerDetails.TotalFare</td>
-        <td>@Model.PassengerDetails.Status</td>
-        <td>@Model.PassengerDetails.BookedTicketTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-    </tr>
-        
-</table>
-        <button id="clearPartialViewButton" class="btn btn-primary">Clear</button>
+    <div style="overflow-x: auto;">
+        <div id="PartialViewContainer">
+            <table class="custom-table">
+                <tr>
+                    <th>Passenger ID</th>
+                    <th>Passenger Name</th>
+                    <th>Passenger Gender</th>
+                    <th>Passenger Age</th>
+                    <th>Starting City</th>
+                    <th>Destination City</th>
+                    <th>Departure Date</th>
+                    <th>Departure Time</th>
+                    <th>Destination Date</th>
+                    <th>Destination Time</th>
+                    <th>Train Number</th>
+                    <th>Class</th>
+                    <th>Total Ticket Count</th>
+                    <th>Total Fare</th>
+                    <th>Status</th>
+                    <th>Booked Ticket Time</th>
+                    <th>Image</th>
+                    <th>Edit</th>
+                </tr>
+                <tr>
+                    <td>@Model.PassengerDetails.P_Id</td>
+                    <td>@Model.PassengerDetails.Passenger_Name</td>
+                    <td>@Model.PassengerDetails.Passenger_gender</td> <!-- Corrected the property name -->
+                    <td>@Model.PassengerDetails.Passenger_Age</td>
+                    <td>@Model.PassengerDetails.StartingCity</td>
+                    <td>@Model.PassengerDetails.DestinationCity</td>
+                    <td>@Model.PassengerDetails.DepartureDate.ToShortDateString()</td>
+                    <td>@Model.PassengerDetails.DepartureTime.ToString("hh\\:mm\\:ss")</td>
+                    <td>@Model.PassengerDetails.DestinationDate.ToShortDateString()</td>
+                    <td>@Model.PassengerDetails.DestinationTime.ToString("hh\\:mm\\:ss")</td>
+                    <td>@Model.PassengerDetails.TrainNumber</td>
+                    <td>@Model.PassengerDetails.Class</td>
+                    <td>@Model.PassengerDetails.TotalTicketCount</td>
+                    <td>@Model.PassengerDetails.TotalFare</td>
+                    <td>@Model.PassengerDetails.Status</td>
+                    <td>@Model.PassengerDetails.BookedTicketTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>
+                        @if (Model.ImageData != null && Model.ImageData.Length > 0)
+                        {
+                            <img src="data:image;base64,@Convert.ToBase64String(Model.ImageData)" alt="Passenger Image" class="image-preview" />
+                        }
+                        else
+                        {
+                            @:No Image Available
+                        }
+                    </td>
+                    <td>
+                        <button onclick="openEditModal(
+                '@Model.PassengerDetails.P_Id',
+                '@Model.PassengerDetails.Passenger_Name',
+                '@Model.PassengerDetails.Passenger_Age',
+                '@Model.PassengerDetails.Passenger_gender',
+                '@Model.PassengerDetails.TrainNumber',
+                '@Model.PassengerDetails.Class',
+                '@Model.PassengerDetails.TotalTicketCount'
+                /* You can't pass image data directly in JavaScript, it's better to handle it separately */
+            )">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+            </table>
+
+
+            <!-- Clear button -->
+            <button id="clearTableButtonOutside">Clear Table</button>
+
+        </div>
     </div>
+
+
+    <!-- Modal for editing -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <form id="editForm" action="/Passenger/UpdatePassenger" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="passengerId" name="passengerId">
+
+                <label for="passengerName">Passenger Name:</label>
+                <input type="text" id="passengerName" name="Passenger_Name">
+                <label for="passengerGender">Passenger Gender:</label>
+                <select id="passengerGender" name="Passenger_Gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <label for="trainNumber">Train Number:</label>
+                <input type="number" id="trainNumber" name="TrainNumber">
+                <label for="passengerAge">Passenger Age:</label>
+                <input type="text" id="passengerAge" name="Passenger_Age">
+
+                <label for="class">Class:</label>
+                <input type="text" id="class" name="Class">
+                <label for="totalTicketCount">Total Ticket Count:</label>
+                <input type="number" id="totalTicketCount" name="TotalTicketCount">
+                <label for="passengerImage">Passenger Image:</label>
+                <input type="file" id="passengerImage" name="PassengerImage">
+
+                <!-- Display current passenger image -->
+                <img id="currentPassengerImage" src="" alt="Current Passenger Image" style="display:none;">
+
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        document.getElementById('clearPartialViewButton').addEventListener('click', function () {
-            clearPartialView();
+        document.getElementById('clearTableButtonOutside').addEventListener('click', function () {
+            clearTable();
         });
 
-        function clearPartialView() {
-            var partialViewContainer = document.getElementById('PartialViewContainer');
-            if (partialViewContainer) {
-                partialViewContainer.innerHTML = '';
+        function clearTable() {
+            var table = document.querySelector('.custom-table'); // Assuming you have only one table with class 'custom-table'
+            var rowCount = table.rows.length;
+            // Start from index 0 to delete all rows including the header
+            for (var i = 0; i < rowCount; i++) {
+                table.deleteRow(0); // Always delete the first row as rows shift up after deletion
             }
+            // Remove the clear button after clearing the table
+            var clearButton = document.getElementById('clearTableButtonOutside');
+            clearButton.parentNode.removeChild(clearButton);
+        }
+        // Function to open the edit modal
+        function openEditModal(passengerId, passengerName, passengerAge, passengerGender, trainNumber, passengerClass, totalTicketCount) {
+            document.getElementById('passengerId').value = passengerId;
+            document.getElementById('passengerName').value = passengerName;
+            document.getElementById('passengerAge').value = passengerAge;
+            document.getElementById('passengerGender').value = passengerGender;
+            document.getElementById('trainNumber').value = trainNumber;
+            document.getElementById('class').value = passengerClass;
+            document.getElementById('totalTicketCount').value = totalTicketCount;
+
+            // Show current passenger image if available
+            var currentImageSrc = ""; // Set this to the URL of the current image
+            if (currentImageSrc !== "") {
+                document.getElementById('currentPassengerImage').src = currentImageSrc;
+                document.getElementById('currentPassengerImage').style.display = "block";
+            }
+
+            var modal = document.getElementById('editModal');
+            modal.style.display = "block";
+        }
+
+        // Function to close the edit modal
+        function closeEditModal() {
+            var modal = document.getElementById('editModal');
+            modal.style.display = "none";
         }
     </script>
+
 </body>
 </html>

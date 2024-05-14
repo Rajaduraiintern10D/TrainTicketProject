@@ -5,25 +5,35 @@
     ViewBag.Title = "Ticket Booking";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@* @if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+{
+    <div id="successMessage" class="alert alert-success fade-out" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+} *@
 @section content {
+    <head>
+        <link rel="stylesheet" href="~/css/site.css" />
+    </head>
     <div class="container">
         <h2>Ticket Booking</h2>
         <hr />
-        @using (Html.BeginForm("Passenger", "Passenger", FormMethod.Post)) // Specify the POST action and controller
+        @using (Html.BeginForm("Passenger", "Passenger", FormMethod.Post, new { enctype = "multipart/form-data" })) // Specify the POST action and controller
         {
+            <h1>Passenger Data Input</h1>
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.PassengerDto.Passenger_Name, new { @class = "control-label" })
+                        @Html.LabelFor(m => m.PassengerDto.Passenger_Name, "Passenger Name", new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.PassengerDto.Passenger_Name, new { @class = "form-control small-textbox" })
                         @Html.ValidationMessageFor(m => m.PassengerDto.Passenger_Name, "", new { @class = "text-danger" })
                     </div>
+
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.PassengerDto.Passenger_Age, new { @class = "control-label" })
+                        @Html.LabelFor(m => m.PassengerDto.Passenger_Age,"Passenger Age", new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.PassengerDto.Passenger_Age, new { @class = "form-control small-textbox" })
                         @Html.ValidationMessageFor(m => m.PassengerDto.Passenger_Age, "", new { @class = "text-danger" })
                     </div>
@@ -31,7 +41,7 @@
 
                 <div class="col-md-4">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.PassengerDto.Passenger_gender, new { @class = "control-label" })
+                        @Html.LabelFor(m => m.PassengerDto.Passenger_gender,"Passenger Gender", new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.PassengerDto.Passenger_gender, new { @class = "form-control small-textbox" })
                         @Html.ValidationMessageFor(m => m.PassengerDto.Passenger_gender, "", new { @class = "text-danger" })
                     </div>
@@ -41,7 +51,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.PassengerDto.TrainNumber, new { @class = "control-label" })
+                        @Html.LabelFor(m => m.PassengerDto.TrainNumber,"Train Number", new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.PassengerDto.TrainNumber, new { @class = "form-control small-textbox" })
                         @Html.ValidationMessageFor(m => m.PassengerDto.TrainNumber, "", new { @class = "text-danger" })
                     </div>
@@ -62,6 +72,13 @@
                         @Html.ValidationMessageFor(m => m.PassengerDto.TotalTicketCount, "", new { @class = "text-danger" })
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.Label("Upload Id ", null, new { @class = "control-label" })
+                        <input type="file" name="Image" class="form-control-file" />
+                    </div>
+                </div>
+
             </div>
 
             <div class="text-center">
@@ -76,7 +93,7 @@
                     <div class="form-group">
                         @Html.Label("Passenger ID", null, new { @class = "control-label" })
                         @Html.TextBox("P_Id", null, new { @class = "form-control small-textbox-passenger-id" })
-                    </div>
+                       </div>
                 </div>
             </div>
             <div class="row">
@@ -85,6 +102,15 @@
                         <button type="submit" class="btn btn-primary">Get Passenger Details</button>
                     </div>
                 </div>
+
+                <!-- Display the success message -->
+                @if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+                {
+                    var passengerId = TempData["PassengerId"];
+                    <div id="successMessage" class="alert alert-success fade-out" role="alert">
+                        Passenger ID: @passengerId
+                    </div>
+                }
             </div>
         }
 
@@ -96,8 +122,22 @@
         
     </div>  
 }
+<script>
+    // JavaScript function to fade out the success message after 3 seconds
+    setTimeout(function () {
+        var successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            successMessage.style.opacity = '0';
+            setTimeout(function () {
+                successMessage.style.display = 'none';
+            }, 1000); // Fade out animation duration
+        }
+    }, 3000); // 3 seconds
+</script>
+
 
 <style>
+    
     .small-textbox {
         width: 100%; /* Take full width of the column */
     }

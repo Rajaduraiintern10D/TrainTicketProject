@@ -6,7 +6,9 @@ namespace TicketBookingProjectUI.Models
     {
         [Required]
         public string UsernameOrEmail { get; set; }
+        [Required]
         public string NewPassword {  get; set; }
+        [Required]
         public string ConfirmPassword { get; set; }
     }
 }

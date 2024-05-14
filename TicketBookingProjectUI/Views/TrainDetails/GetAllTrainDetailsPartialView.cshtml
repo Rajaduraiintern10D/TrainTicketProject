@@ -1,0 +1,66 @@
+﻿@{
+    var trainDetailsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TicketBookingProject.Data.Models.TrainDetails>>(ViewBag.AllTrainDetailsResponseData);
+}
+
+
+<style>
+ 
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<!-- Add the table element -->
+<table id="trainDetailsTable">
+    <tr>
+        <th>Train Number</th>
+        <th>Train Name</th>
+        <th>Starting City</th>
+        <th>Destination City</th>
+        <th>Departure Date</th>
+        <th>Departure Time</th>
+        <th>Destination Date</th>
+        <th>Destination Time</th>
+    </tr>
+    @foreach (var trainDetails in trainDetailsList)
+    {
+        <tr>
+            <td>@trainDetails.TrainNumber</td>
+            <td>@trainDetails.TrainName</td>
+            <td>@trainDetails.StartingCity</td>
+            <td>@trainDetails.DestinationCity</td>
+            <td>@trainDetails.DepartureDate.ToShortDateString()</td>
+            <td>@trainDetails.DepartureTime</td>
+            <td>@trainDetails.DestinationDate.ToShortDateString()</td>
+            <td>@trainDetails.DestinationTime</td>
+        </tr>
+    }
+</table>
+
+<!-- Add the Clear button -->
+<button onclick="clearTable()">Clear</button>
+
+<!-- Add JavaScript to clear the table -->
+<script>
+    function clearTable() {
+        // Get the table element
+        var table = document.getElementById("trainDetailsTable");
+
+        // Clear all rows starting from index 1
+        for (var i = table.rows.length -1; i >= 0; i--) {
+            table.deleteRow(i);
+        }
+
+    }
+</script>

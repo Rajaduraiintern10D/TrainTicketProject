@@ -1,20 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using TicketBookingProject.Models;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TicketBookingProject.Data.ApplicationDbContext;
-using System.Runtime.InteropServices;
-using TicketBookingProject.IRepository;
-using Microsoft.AspNetCore.Mvc;
-using TicketBookingProject.Data.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using TicketBookingProject.Shared_Folder;
 using TicketBookingProject.Data.Dto;
-using AutoMapper;
+using TicketBookingProject.Data.Models;
+using TicketBookingProject.IRepository;
+using TicketBookingProject.Models;
+using TicketBookingProject.Shared_Folder;
 
 public class PassengerRepository : IPassengerRepository
 {
     private readonly ApplicationDbContext _context;
-    
+
     private readonly ITrainDetailsRepository _trainDetailsRepository;
     private readonly IMapper _mapper;
 
@@ -52,7 +48,7 @@ public class PassengerRepository : IPassengerRepository
     #endregion
 
     #region Update passenger
-     public void UpdatePassenger(PassengerDetails passengerDetails, PassengerDto passengerDto)
+    public void UpdatePassenger(PassengerDetails passengerDetails, PassengerDto passengerDto)
     {
         var existingPassenger = _context.PassengerDetails.Find(passengerDetails.P_Id);
         if (existingPassenger == null)
@@ -91,32 +87,60 @@ public class PassengerRepository : IPassengerRepository
         existingPassenger.Passenger_gender = passengerDto.Passenger_gender;
         existingPassenger.Class = passengerDto.Class;
         existingPassenger.TrainNumber = passengerDto.TrainNumber;
-        existingPassenger.TotalFare=totalFare;
+        existingPassenger.TotalFare = totalFare;
         existingPassenger.StartingCity = passengerDetails.StartingCity;
         existingPassenger.DepartureDate = passengerDetails.DepartureDate;
         existingPassenger.DestinationCity = passengerDetails.DestinationCity;
-        existingPassenger.DestinationDate= passengerDetails.DestinationDate;
-        existingPassenger.TotalTicketCount= passengerDto.TotalTicketCount;
+        existingPassenger.DestinationDate = passengerDetails.DestinationDate;
+        existingPassenger.TotalTicketCount = passengerDto.TotalTicketCount;
 
-        try
+        // Check if image data is provided
+        if (!string.IsNullOrEmpty(passengerDto.Image))
         {
-            _context.SaveChanges();
-        }
-        catch (DbUpdateException ex)
-        {
-            throw new Exception("Error updating passenger details: Database update error.", ex);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error updating passenger details.", ex);
+            // Convert Base64 string to byte array
+            byte[] imageData = Convert.FromBase64String(passengerDto.Image);
+
+            // Get the existing image, if any
+            var existingImage = _context.Images.FirstOrDefault(i => i.P_Id == passengerDetails.P_Id);
+
+            if (existingImage != null)
+            {
+                // Update existing image data
+                existingImage.Data = imageData;
+            }
+            else
+            {
+                // Create a new image entry
+                var image = new Image
+                {
+                    P_Id = passengerDetails.P_Id,
+                    Data = imageData
+                };
+
+                _context.Images.Add(image);
+            }
+
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Error updating passenger details: Database update error.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error updating passenger details.", ex);
+            }
+
         }
 
+
+
+
+        #endregion
     }
-
-
-
-
-    #endregion
 }
 
 

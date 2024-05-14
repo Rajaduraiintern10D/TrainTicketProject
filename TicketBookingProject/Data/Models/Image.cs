@@ -1,6 +1,4 @@
-﻿// Image.cs
-using System.ComponentModel.DataAnnotations;
-using TicketBookingProject.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TicketBookingProject.Data.Models
 {
@@ -12,6 +10,6 @@ namespace TicketBookingProject.Data.Models
         [Required]
         public byte[] Data { get; set; }
 
-       
+        public int P_Id { get; set; }
     }
 }

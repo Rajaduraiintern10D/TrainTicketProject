@@ -8,6 +8,19 @@ html {
   }
 }
 
+.nav-link:active {
+    color: #000; /* Dark color when link is clicked */
+}
+
+.nav-link:visited {
+    color: #666; /* Light color for visited links */
+}
+
+
+/* Apply the fade-out animation to the success message */
+/*.fade-out {
+    animation: fadeOut 3s forwards;
+}*/
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }

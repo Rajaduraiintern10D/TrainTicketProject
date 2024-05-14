@@ -4,10 +4,10 @@ namespace TicketBookingProjectUI.Models
 {
     public class LoginViewModel
     {
-        [Required]
+        /*[Required]*/
         public string User_Name { get; set; }
 
-        [Required]
+        /*[Required]*/
         [DataType(DataType.Password)]
         public string User_Password { get; set; }
     }

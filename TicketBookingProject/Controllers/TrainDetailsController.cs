@@ -24,7 +24,7 @@ namespace TicketBookingProject.Controllers
 
         }
         #region GetSeatAvailability
-        [HttpGet("{trainNumber}/seatavailability")]
+        [HttpGet("{trainNumber}")]
         public IActionResult GetSeatAvailability(int trainNumber)
         {
             var seatAvailabilityDto = _trainingDetailsRepository.GetSeatAvailability(trainNumber);
@@ -54,9 +54,19 @@ namespace TicketBookingProject.Controllers
             if (availableTrains == null || !availableTrains.Any())
             {
                 return NotFound("No trains available for the specified date range.");
-            }
-
-            return Ok(availableTrains);
+            } 
+            var trainDtos = availableTrains.Select(train => new TrainDetailsDto
+            {
+                TrainNumber = train.TrainNumber,
+                TrainName = train.TrainName,
+                StartingCity = train.StartingCity,
+                DestinationCity = train.DestinationCity,
+                DepartureDate = train.DepartureDate,
+                DepartureTime = train.DepartureTime,
+                DestinationDate = train.DestinationDate,
+                DestinationTime = train.DestinationTime
+            });
+            return Ok(trainDtos);
         }
         #endregion
     }

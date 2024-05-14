@@ -44,6 +44,17 @@ namespace TicketBookingProject.Repository
                 throw new Exception("Invalid base64 string format.", ex);
             }
         }
+        public void AddImage(Image image)
+        {
+            _context.Images.Add(image);
+            _context.SaveChanges();
+        }
+        public byte[] GetImageDataByPassengerId(int passengerId)
+        {
+            var image = _context.Images.FirstOrDefault(i => i.P_Id == passengerId);
+            return image?.Data;
+        }
+
         #endregion
     }
 }

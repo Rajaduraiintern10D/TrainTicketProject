@@ -12,13 +12,16 @@ using TicketBookingProject.Shared_Folder;
 [ApiController]
 public class PassengerController : ControllerBase
 {
+    private readonly IImageRepository _imageRepository;
     private readonly IPassengerRepository _passengerRepository;
     private readonly ITrainDetailsRepository _trainDetailsRepository;
     private readonly IMapper _mapper;
-    public PassengerController(IPassengerRepository passengerRepository,
+    public PassengerController(IImageRepository imageRepository,
+        IPassengerRepository passengerRepository,
         ITrainDetailsRepository trainDetailsRepository,
         IMapper mapper)
     {
+        _imageRepository = imageRepository;
         _passengerRepository = passengerRepository;
         _trainDetailsRepository = trainDetailsRepository;
         _mapper = mapper;
@@ -42,41 +45,54 @@ public class PassengerController : ControllerBase
         {
             return NotFound("Train details not found");
         }
-        //Fetch Fare From TrainWiseSeatavailabilities based on the provided class and train number
-        decimal? fare = _trainDetailsRepository.GetFareByClassAndTrainNumber
-           (passengerDto.TrainNumber, passengerDto.Class);
+        // Fetch Fare From TrainWiseSeatavailabilities based on the provided class and train number
+        decimal? fare = _trainDetailsRepository.GetFareByClassAndTrainNumber(passengerDto.TrainNumber, passengerDto.Class);
         if (fare == null)
         {
-            return NotFound($"Fare not found for class: {passengerDto.Class} " +
-                "and train number: {passengerRequest.TrainNumber}");
+            return NotFound($"Fare not found for class: {passengerDto.Class} and train number: {passengerDto.TrainNumber}");
         }
         // Calculate total fare based on fare per ticket and total ticket count
         decimal totalFare = fare.Value * passengerDto.TotalTicketCount;
 
-        //Map dto to Entity
-        var passengerDetails=_mapper.Map<PassengerDetails>(passengerDto);
-        
+        // Map dto to Entity
+        var passengerDetails = _mapper.Map<PassengerDetails>(passengerDto);
 
-        //populate starting city and destination city from Traindetails
-        passengerDetails.DepartureDate=trainDetails.DepartureDate;
+        // Populate starting city and destination city from Traindetails
+        passengerDetails.DepartureDate = trainDetails.DepartureDate;
         passengerDetails.DepartureTime = trainDetails.DepartureTime;
         passengerDetails.DestinationDate = trainDetails.DestinationDate;
         passengerDetails.DestinationTime = trainDetails.DestinationTime;
-        passengerDetails.StartingCity=trainDetails.StartingCity;
-        passengerDetails.DestinationCity=trainDetails.DestinationCity;
-        passengerDetails.TotalFare= totalFare;
-        passengerDetails.BookedTicketTime=DateTime.Now;
+        passengerDetails.StartingCity = trainDetails.StartingCity;
+        passengerDetails.DestinationCity = trainDetails.DestinationCity;
+        passengerDetails.TotalFare = totalFare;
+        passengerDetails.BookedTicketTime = DateTime.Now;
+
+        //convert imageData to byte Array
+        byte[] imageData = Convert.FromBase64String(passengerDto.Image);
+
+       
+        // Assign the image byte array to the entity's Image property
+        /*  passengerDetails.Image = passengerDto.Image;*/
 
         int insertedPassenger = _passengerRepository.AddPassenger(passengerDetails);
 
-        //Get last inserted passenger from the database
-        var lastInsertedPassneger=_passengerRepository.GetPassengerByID(insertedPassenger);
-        
 
-        return Ok(new { PassengerDetails = lastInsertedPassneger, Message = "Passenger added successfully" });
-
+        // Get last inserted passenger from the database
+        var lastInsertedPassenger = _passengerRepository.GetPassengerByID(insertedPassenger);
+        var passengerId=lastInsertedPassenger.P_Id;
+        // Create Image entity
+        var image = new Image
+        {
+            Data = imageData,
+            // Assuming P_Id is the foreign key linking Image to PassengerDetails
+            P_Id = passengerId // You need to ensure you set this property correctly
+        };
+        _imageRepository.AddImage(image);
+        return Ok(new { PassengerId = passengerId, Message = "Passenger added successfully" });
     }
     #endregion
+
+
     #region GetPassengerById
     [HttpGet("GetPassengerById/{passengerId}")]
     public IActionResult GetPassengerById(int passengerId)
@@ -86,7 +102,10 @@ public class PassengerController : ControllerBase
         {
             return NotFound($"Passenger with ID {passengerId} not found");
         }
-        return Ok(passenger);
+        //retrieve associated Image data
+        var imageData=_imageRepository.GetImageDataByPassengerId(passengerId);
+        
+        return Ok(new {Passenger =passenger,Imagedata=imageData});
     }
     #endregion
     #region UpdatePassengerStatus
@@ -100,8 +119,8 @@ public class PassengerController : ControllerBase
 
         _passengerRepository.UpdatePassengerStatus(PassengerId, passengerStatus);
         return Ok("Passenger status updated successfully");
-    }
     #endregion
+    }
     #region UpdatePassengerDetails
     [HttpPut("UpdatePassengerDetails/{passengerId}")]
     public IActionResult UpdatePassengerDetails(int passengerId, [FromBody] PassengerDto updatedPassenger)
@@ -117,6 +136,7 @@ public class PassengerController : ControllerBase
             {
                 return NotFound($"Passenger with ID {passengerId} not found.");
             }
+        
             // Update passenger details
             _passengerRepository.UpdatePassenger(existingPassenger, updatedPassenger);
             //Fetch the complete updated passenger details

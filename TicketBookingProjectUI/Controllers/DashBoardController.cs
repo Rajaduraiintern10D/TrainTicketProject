@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
 using TicketBookingProjectUI.ConstantFile;
 
 namespace TicketBookingProjectUI.Controllers
@@ -13,7 +12,7 @@ namespace TicketBookingProjectUI.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> Index()
-         {
+        {
             // Call the GetDataAsync method from the ApiService
             var jsonString = await _apiService.GetDataAsync();
 
@@ -28,7 +27,7 @@ namespace TicketBookingProjectUI.Controllers
                 return View("Error");
             }
         }
-        
+
 
     }
 }

@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims; // Add this line
 using TicketBookingProjectUI.ConstantFile;
 using TicketBookingProjectUI.Models;
-using TicketBookingProjectUI.ConstantFile;
+
 
 namespace TicketBookingProjectUI.Controllers
 {
@@ -16,23 +19,50 @@ namespace TicketBookingProjectUI.Controllers
 
         public IActionResult Index()
         {
+            // Check if the user is already authenticated
+            if (User.Identity.IsAuthenticated)
+            {
+                // Redirect to the appropriate logged-in page
+                return RedirectToAction("Passenger", "Passenger");
+            }
+
             return View();
         }
 
         [HttpPost]
-        
         public async Task<IActionResult> Index(LoginViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-               var token= await _apiService.AuthenticateAsync(model);
-                if (token != null)
+                var token = await _apiService.AuthenticateAsync(model);
+                if (!string.IsNullOrEmpty(token))
                 {
-                    // Authentication successful, store the token securely (e.g., in a cookie)
-                    // For demonstration purposes, let's store it in TempData
-                    TempData["Token"] = token;
+                    // Store the token in session
+                    HttpContext.Session.SetString("JWTToken", token);
 
-                    // Redirect authenticated user to dashboard or home page
+                    // Sign in the user using cookie authentication
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, model.User_Name),
+                
+                // Add any additional claims as needed
+            };
+
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    /*var authProperties = new AuthenticationProperties
+                    {
+                        *//*// You can customize the authentication properties if needed
+                        IsPersistent = false*//*
+                    };*/
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity)/*,
+                            authProperties*/);
+
+
                     return RedirectToAction("Passenger", "Passenger");
                 }
                 else
@@ -42,5 +72,15 @@ namespace TicketBookingProjectUI.Controllers
             }
             return View(model);
         }
+        public async Task<IActionResult> Logout()
+        {
+            // Sign out the user
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Redirect to a page after logout (optional)
+            return RedirectToAction("Index", "Sign");
+        }
+
+
     }
 }

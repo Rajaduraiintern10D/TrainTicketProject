@@ -1,0 +1,45 @@
+﻿@{
+    // Deserialize the JSON string into a TrainWiseSeatAvailability object
+    var seatAvailability = Newtonsoft.Json.JsonConvert.DeserializeObject<TicketBookingProject.Data.Models.TrainWiseSeatAvailability>(ViewBag.SeatAvailabilityResponseData);
+}
+
+<!-- Add the style tag for internal CSS -->
+<style>
+    /* Define styles for the table */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<!-- Add the table element -->
+<table>
+    <tr>
+        <th>Train Number</th>
+        <th>First Class Total Seat</th>
+        <th>First Class Fare</th>
+        <th>Second Class Total Seat</th>
+        <th>Second Class Fare</th>
+        <th>Sleeper Class Total Seat</th>
+        <th>Sleeper Class Fare</th>
+    </tr>
+    <tr>
+        <td>@seatAvailability.TrainNumber</td>
+        <td>@seatAvailability.FirstClassTotalSeat</td>
+        <td>@seatAvailability.FirstClassFare</td>
+        <td>@seatAvailability.SecondClassTotalSeat</td>
+        <td>@seatAvailability.SecondClassFare</td>
+        <td>@seatAvailability.SleeperClassTotalSeat</td>
+        <td>@seatAvailability.SleeperClassFare</td>
+    </tr>
+</table>

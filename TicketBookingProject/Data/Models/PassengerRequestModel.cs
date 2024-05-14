@@ -12,5 +12,6 @@
         public int TotalTicketCount { get; set; }
         //public int TotalFare { get; set; }
         //public string Status { get; set; }
+
     }
 }

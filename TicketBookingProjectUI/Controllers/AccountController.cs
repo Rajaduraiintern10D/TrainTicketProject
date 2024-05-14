@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TicketBookingProjectUI.ConstantFile;
 using TicketBookingProjectUI.Models;
 
@@ -8,7 +7,7 @@ namespace TicketBookingProjectUI.Controllers
     public class AccountController : Controller
     {
         private readonly ApiService _apiService;
-        public AccountController (ApiService apiService)
+        public AccountController(ApiService apiService)
         {
             _apiService = apiService;
         }
@@ -25,17 +24,19 @@ namespace TicketBookingProjectUI.Controllers
         {
             return View();
         }
+        #region Register
         [HttpPost]
-        public async Task <IActionResult> Register(RegisterUser registerUser)
+        public async Task<IActionResult> Register(RegisterUser registerUser)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                if(await _apiService.ResgisterAsync(registerUser))
+                if (await _apiService.ResgisterAsync(registerUser))
                 {
                     TempData["SuccessMessage"] = "User Registered Successfully";
 
                 }
-                else {
+                else
+                {
                     ModelState.AddModelError(string.Empty, "Failed to update password. Please try again.");
                 }
             }
@@ -46,6 +47,9 @@ namespace TicketBookingProjectUI.Controllers
             // Redirect to Index action of SignController
             return RedirectToAction("Index", "Sign");
         }
+        #endregion
+
+        #region ForgotPassword
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
@@ -68,6 +72,6 @@ namespace TicketBookingProjectUI.Controllers
             // Redirect to Index action of SignController
             return RedirectToAction("Index", "Sign");
         }
-
+        #endregion
     }
 }
